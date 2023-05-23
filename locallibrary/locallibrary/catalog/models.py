@@ -13,7 +13,7 @@ class Genre(models.Model):
 
 
 class Language(models.Model):
-    name = models.CharField(max_length=200, help_text='Укажите оригинальный язык книги')
+    name = models.CharField(max_length=200, help_text='Укажите язык оригинала')
 
     def __str__(self):
         return self.name
