@@ -18,5 +18,5 @@ def index(request):
         request,
         'index.html',
         context={'num_books': num_books, 'num_instances': num_instances,
-                 'num_instances_available': num_instances_available, 'num_authors': num_authors},
+                 'num_instances_available': num_instances_available, 'num_authors': num_authors} ,
     )
