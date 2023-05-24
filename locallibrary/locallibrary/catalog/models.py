@@ -20,19 +20,54 @@ class Language(models.Model):
 
 
 
+class Author(models.Model):
+    """
+    Model representing an author.
+    """
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    date_of_birth = models.DateField(null=True, blank=True)
+    date_of_death = models.DateField('Died', null=True, blank=True)
+    # book = models.ForeignKey('Book', on_delete=models.CASCADE,related_name='authors')
+
+    class Meta:
+        ordering = ['last_name', 'first_name']
+
+    def get_absolute_url(self):
+        """
+        Returns the url to access a particular author instance.
+        """
+        return reverse('author-detail', args=[str(self.id)])
+
+
+    def __str__(self):
+        """
+        String for representing the Model object.
+        """
+        return '{0}, {1}'.format(self.last_name, self.first_name)
+
+
+
+
+
+
+
 class Book(models.Model):
     title = models.CharField(max_length=200)
-    author = models.ForeignKey('author', on_delete=models.SET_NULL, null=True)
+    author = models.ForeignKey(Author, on_delete=models.SET_NULL, null=True)
     summary = models.TextField(max_length=1000, help_text='Введите краткое описание книги')
     isbn = models.CharField('ISBN', max_length=13, help_text='13 цифр <a href="https://www.isbn-international.org/content/what-isbn">ISBN номер</a>')
     genre = models.ManyToManyField(Genre, help_text='Укажите жанр для этой книги')
     language = models.ForeignKey(Language, help_text="укажите язык оригинала", on_delete=models.SET_NULL, null=True)
+    # authors = models.ManyToManyField(Author, related_name='books')
 
     class Meta:
         ordering = ['title', 'author']
 
     def display_genre(self):
-        return ','.join([genre.name for genre in self.genre.all()[:3]])
+        return ', '.join([genre.name for genre in self.genre.all()[:3]])
+    display_genre.short_description = 'Genre'
+
 
 
     display_genre.short_description = 'Genre'
@@ -60,7 +95,7 @@ class BookInstance(models.Model):
     book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True)
     imprint = models.CharField(max_length=200)
     due_back = models.DateField(null=True, blank=True)
-    borrower = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True)
+    borrower = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     @property
     def is_overdue(self):
@@ -87,32 +122,5 @@ class BookInstance(models.Model):
         String for representing the Model object
         """
         return '{0} ({1})'.format(self.id, self.book.title)
-
-
-class Author(models.Model):
-    """
-    Model representing an author.
-    """
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    date_of_birth = models.DateField(null=True, blank=True)
-    date_of_death = models.DateField('Died', null=True, blank=True)
-
-
-    class Meta:
-        ordering = ['last_name', 'first_name']
-
-    def get_absolute_url(self):
-        """
-        Returns the url to access a particular author instance.
-        """
-        return reverse('author-detail', args=[str(self.id)])
-
-
-    def __str__(self):
-        """
-        String for representing the Model object.
-        """
-        return '{0}, {1}'.format(self.last_name, self.first_name)
 
 
