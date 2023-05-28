@@ -4,6 +4,8 @@ from django.urls import reverse
 # Create your models here.
 
 
+
+
 class Genre(models.Model):
     name = models.CharField(max_length=200, help_text="Введите жанр книги")
 
@@ -77,6 +79,20 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Search(models.Model):
+    template_name = 'base_generic.html'
+    context_object_name = 'books'
+    paginate_by = 5
+
+    def get_queryset(self):
+        return Book.objects.filter(title__iregex=self.request.GET.get('q'))
+
+    def get_context_data(self,*,object_list=None,**kwargs):
+        context = super().get_context_data(**kwargs)
+        context['q'] = self.request.GET.get('q')
+        return context
 
 
 

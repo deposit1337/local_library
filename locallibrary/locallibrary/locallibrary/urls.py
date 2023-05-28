@@ -24,9 +24,9 @@ urlpatterns = [
     path('catalog/', include('catalog.urls')),
     path('', RedirectView.as_view(url='/catalog/', permanent=True)),
     path('catalog/books/'),
-    path('catalog/authors'),
-    path('catalog/book/<id>'),
-    path('catalog/author/<id>'),
+    # path('catalog/authors'),
+    # path('catalog/book/<id>'),
+    # path('catalog/author/<id>'),
 
 ]
 
