@@ -65,34 +65,23 @@ class Book(models.Model):
 
     class Meta:
         ordering = ['title', 'author']
+        verbose_name = 'Книга'
+        verbose_name_plural = 'Книги'
+
+    def get_absolute_url(self):
+        return reverse('book-detail', args=[str(self.id)])
 
     def display_genre(self):
         return ', '.join([genre.name for genre in self.genre.all()[:3]])
-    display_genre.short_description = 'Genre'
 
 
 
     display_genre.short_description = 'Genre'
 
-    def get_absolute_url(self):
-        return reverse('book-details', args=[str(self.id)])
+    display_genre.short_description = 'Genre'
 
     def __str__(self):
         return self.title
-
-
-class Search(models.Model):
-    template_name = 'base_generic.html'
-    context_object_name = 'books'
-    paginate_by = 5
-
-    def get_queryset(self):
-        return Book.objects.filter(title__iregex=self.request.GET.get('q'))
-
-    def get_context_data(self,*,object_list=None,**kwargs):
-        context = super().get_context_data(**kwargs)
-        context['q'] = self.request.GET.get('q')
-        return context
 
 
 
@@ -115,8 +104,9 @@ class BookInstance(models.Model):
 
     @property
     def is_overdue(self):
-        """Determines if the book is overdue based on due date and current date."""
-        return bool(self.due_back and date.today() > self.due_back)
+        if self.due_back and date.today() > self.due_back:
+            return True
+        return False
 
 
     LOAN_STATUS = (
